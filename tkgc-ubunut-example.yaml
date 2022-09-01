@@ -1,0 +1,42 @@
+apiVersion: run.tanzu.vmware.com/v1alpha2
+kind: TanzuKubernetesCluster
+metadata:
+  name: byoi-centos-cluster-1
+  namespace: centos-byoi-test
+spec:
+  topology:
+    controlPlane:
+      replicas: 1
+      vmClass: best-effort-small
+      storageClass: tanzu-standard-storage
+      volumes:
+        - name: etcd
+          mountPath: /var/lib/etcd
+          capacity:
+            storage: 4Gi
+      tkr:
+        reference:
+          name: ubuntu-2004-kube-v1.22.8
+    nodePools:
+    - name: worker-nodepool-a1
+      replicas: 1
+      vmClass: best-effort-medium
+      storageClass: tanzu-standard-storage
+      volumes:
+        - name: containerd
+          mountPath: /var/lib/containerd
+          capacity:
+            storage: 16Gi
+      tkr:
+        reference:
+          name: ubuntu-2004-kube-v1.22.8
+    - name: worker-nodepool-a2
+      replicas: 1
+      vmClass: best-effort-small
+      storageClass: tanzu-standard-storage
+      tkr:
+        reference:
+          name: centos-7-kube-v1.22.9
+  settings:
+    storage:
+      defaultClass: tanzu-standard-storage
